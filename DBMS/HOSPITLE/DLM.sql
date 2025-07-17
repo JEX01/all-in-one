@@ -1,3 +1,17 @@
+/*
+TABLE NAME:-
+Appointment
+Patient
+MedicalHistory
+Doctor
+Schedule
+PatientsFillHistory
+Diagnose
+PatientsAttendAppointments
+DocsHaveSchedules
+DoctorViewsHistory
+*/
+
 CREATE DATABASE HMS;
 USE HMS;
 DROP DATABASE HMS;
