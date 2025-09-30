@@ -1,1 +1,51 @@
+from itertools import product
+import pandas as pd
+import numpy as np
 
+df = pd.read_csv(r"/content/uber_ride_bookings.csv")
+
+df["Booking Status"] = df["Booking Status"].replace("No Driver Found", "Incomplete")
+df["Booking Status"] = df["Booking Status"].replace("Cancelled by Driver", "Incomplete")
+df["Booking Status"] = df["Booking Status"].replace("Cancelled by Customer", "Incomplete")
+df["Booking Status"] = df["Booking Status"].fillna("Incomplete")
+df["Payment Method"] = df["Payment Method"].fillna(df["Payment Method"].mode()[0])
+
+
+
+df = df.drop(columns=["Cancelled Rides by Customer", "Reason for cancelling by Customer", "Cancelled Rides by Driver", "Driver Cancellation Reason", "Incomplete Rides", "Incomplete Rides Reason"])
+pd.set_option('display.max_rows', None)      # Show all rows
+pd.set_option('display.max_columns', None)   # Show all columns
+df["Avg VTAT"] = df["Avg VTAT"].fillna(df["Avg VTAT"].mean())
+df["Avg CTAT"] = df["Avg CTAT"].fillna(df["Avg CTAT"].mean())
+df["Ride Distance"] = df["Ride Distance"].fillna(df["Ride Distance"].mean())
+df["Driver Ratings"] = df["Driver Ratings"].fillna(df["Driver Ratings"].mean())
+df["Customer Rating"] = df["Customer Rating"].fillna(df["Customer Rating"].mean())
+df["Booking Value"] = df["Booking Value"].fillna(df["Booking Value"].mean())
+df['Date'] = pd.to_datetime(df['Date'])
+
+df['Year'] = df['Date'].dt.year
+df['Month'] = df['Date'].dt.month
+df['Day'] = df['Date'].dt.day
+
+# Extract hours, minutes, and seconds from the 'Time' column
+df['Time'] = pd.to_datetime(df['Time'], format='%H:%M:%S').dt.time
+df['Hour'] = df['Time'].apply(lambda x: x.hour)
+df['Minute'] = df['Time'].apply(lambda x: x.minute)
+df['Second'] = df['Time'].apply(lambda x: x.second)
+
+
+# display(df.head())
+for i in df.columns:
+  pass
+  # print( df[f"{i}"].unique() )
+df.head(30)
+# df
+
+from google.colab import files
+# Make sure your cleaned CSV is saved first
+df.to_csv("cleaned_dataset.csv", index=False)
+# Download it
+files.download("cleaned_dataset.csv")
+
+
+print("✅ File saved as cleaned_dataset.csv")
