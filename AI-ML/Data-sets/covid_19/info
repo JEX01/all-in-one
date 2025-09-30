@@ -1,0 +1,31 @@
+from itertools import product
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv(r"/content/covid_19_data.csv")
+
+df['ObservationDate'] = pd.to_datetime(df['ObservationDate'])
+df['Year'] = df['ObservationDate'].dt.year
+df['Month'] = df['ObservationDate'].dt.month
+df['Day'] = df['ObservationDate'].dt.day
+
+# Extract hours, minutes, and seconds from the 'Time' column
+df['Last Update'] = pd.to_datetime(df['Last Update'], format='mixed')
+df['Hour'] = df['Last Update'].dt.hour
+df['Minute'] = df['Last Update'].dt.minute
+
+df = df.dropna(subset =['Province/State'])
+pd.set_option("display.max_rows",None)
+pd.set_option("display.max_columns",None)
+# df.head(90)
+for i in df.columns:
+  print(f"{i} is ", df[i].unique() )
+
+from google.colab import files
+# Make sure your cleaned CSV is saved first
+df.to_csv("cleaned_dataset.csv", index=False)
+# Download it
+files.download("cleaned_dataset.csv")
+
+
+print("✅ File saved as cleaned_dataset.csv")
