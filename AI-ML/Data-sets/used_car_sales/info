@@ -1,0 +1,67 @@
+# from itertools import product
+import pandas as pd
+import numpy as np
+df = pd.read_csv(r"/content/Used_Car_Price_Prediction.csv")
+
+def find_duplicate_columns(df):
+    """
+    Finds duplicate columns in a pandas DataFrame.
+
+    Args:
+        df: The input pandas DataFrame.
+
+    Returns:
+        A list of names of duplicate columns (excluding the first occurrence).
+    """
+    duplicate_column_names = set()
+    # Iterate over all columns
+    for x in range(df.shape[1]):
+        # Select column x
+        col_x = df.iloc[:, x]
+        # Iterate over columns to the right of column x
+        for y in range(x + 1, df.shape[1]):
+            # Select column y
+            col_y = df.iloc[:, y]
+            # Check if column x and column y are identical
+            if col_x.equals(col_y):
+                # Add the name of column y to the set of duplicate column names
+                duplicate_column_names.add(df.columns[y])
+    return list(duplicate_column_names)
+# Find duplicate columns in your DataFrame (assuming your DataFrame is named 'df')
+duplicate_cols = find_duplicate_columns(df)
+
+
+pd.set_option('display.max_rows',None)
+pd.set_option('display.max_columns',None)
+# pd.set_option('display.max_rows', None)      # Show all rows
+# pd.set_option('display.max_columns', None)   # Show all columns
+
+# Split 'car_name' into 'make' and 'model'
+df['make'] = df['car_name'].apply(lambda x: x.split(' ')[0])
+df['model'] = df['car_name'].apply(lambda x: ' '.join(x.split(' ')[1:]))
+
+# Fill missing values
+for col in ["body_type", "transmission", "registered_city", "registered_state", "source", "car_availability", "car_rating", "fitness_certificate"]:
+  mode_val = df[col].mode()
+  if not mode_val.empty:
+    df[col] = df[col].fillna(mode_val[0])
+
+df["original_price"] = df["original_price"].fillna(df["original_price"].mean())
+
+
+
+
+# if duplicate_cols:
+#     print("Duplicate columns found:", duplicate_cols)
+# else:
+#     print("No duplicate columns found.")
+
+# df.head(4)
+from google.colab import files
+# Make sure your cleaned CSV is saved first
+df.to_csv("cleaned_dataset.csv", index=False)
+# Download it
+files.download("cleaned_dataset.csv")
+
+
+print("✅ File saved as cleaned_dataset.csv")
